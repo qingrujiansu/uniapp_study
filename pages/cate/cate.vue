@@ -1,5 +1,6 @@
 <template>
   <view>
+    <my-search></my-search>
     <view class="scroll-view-container">
       <!-- 左侧视图滚动区域 -->
       <scroll-view class="left-scroll-view" scroll-y :style="{height:wh + 'px'}">
@@ -14,7 +15,7 @@
         <view class="cate-lv2" v-for="(item2 ,index) in cateLevel2" :key="index">
           <view class="cate-lv2-title"> /{{item2.cat_name}}/</view>
           <view class="cate-lv3-list">
-            <view class="cate-lv3-item" v-for="(item3,index) in item2.children" :key="index">
+            <view class="cate-lv3-item" v-for="(item3,index) in item2.children" :key="index" @click="goToGoodsList(item3)">
               <!-- 图片 -->
              <image :src="item3.cat_icon.replace('api-ugo-dev','api-ugo-web')"></image>
               <text>{{item3.cat_name}}</text>
@@ -41,7 +42,7 @@
     },
     onLoad() {
       const sysInfo = uni.getSystemInfoSync()
-      this.wh = sysInfo.windowHeight
+      this.wh = sysInfo.windowHeight -50
       this.getCateList()
     },
     methods: {
@@ -60,6 +61,11 @@
         //当发生变化的时候为二级分类重新赋值
         this.cateLevel2 = this.cateList[index].children
         this.scrollTop = this.scrollTop === 0 ? 1 : 0
+      },
+      goToGoodsList(item3){
+        uni.navigateTo({
+          url:'/subPackage/goods_list/goods_list?cid=' + item3.cat_id 
+        })
       }
     }
 

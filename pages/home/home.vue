@@ -1,6 +1,9 @@
 <template>
 
   <view>
+    <view class="search-box">
+      <my-search @goToSearch="goToSearch"></my-search>
+    </view>
     <!-- 轮播图区域 -->
     <swiper indicator-dots="ture" interval="3000" duration="1000" circular="ture" autoplay="true">
       <swiper-item v-for="(item) in swiperList" :key="item.goods_id">
@@ -28,7 +31,8 @@
           <view class="right-img-box">
             <view class="right-img-box-image" v-for="(item2,index) in item1.product_list" :key="index">
               <navigator :url="item2.url">
-                <image :src="item2.image_src" v-if="index !== 0 " mode="widthFix" :style="{width:item2.image_width + 'rpx'}"></image>
+                <image :src="item2.image_src" v-if="index !== 0 " mode="widthFix"
+                  :style="{width:item2.image_width + 'rpx'}"></image>
               </navigator>
             </view>
           </view>
@@ -82,18 +86,28 @@
           data: res
         } = await uni.$http.get('/api/public/v1/home/floordata')
         if (res.meta.status != 200) return uni.$showMsg();
-        res.message.forEach(floor=>{
-          floor.product_list.forEach(item =>{
-            item.url = '/subPackage/goods_list/goods_list?'+item.navigator_url.split('?')[1]
+        res.message.forEach(floor => {
+          floor.product_list.forEach(item => {
+            item.url = '/subPackage/goods_list/goods_list?' + item.navigator_url.split('?')[1]
           })
         })
         this.floorList = res.message
+      },
+      goToSearch() {
+        uni.navigateTo({
+          url: '/subPackage/search/search'
+        })
       }
     }
   }
 </script>
 
 <style lang="scss">
+  .search-box {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
   swiper {
     height: 350rpx;
 
@@ -119,14 +133,16 @@
   .floor-item {
     margin-top: 10rpx;
   }
+
   .floor-title {
     height: 60rpx;
     width: 100%;
   }
- .floor-img-box {
-   display: flex;
-   padding-left: 10rpx;
- }
+
+  .floor-img-box {
+    display: flex;
+    padding-left: 10rpx;
+  }
 
   .left-img-box {
     image {
@@ -138,6 +154,6 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-   
+
   }
 </style>
