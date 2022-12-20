@@ -19,7 +19,7 @@
         <uni-icons type="trash" size="17px" @click="clearHistory"></uni-icons>
       </view>
       <view class="history-item">
-        <uni-tag :text="item" v-for="(item,index) in historys" :key="index" class="history-tag"></uni-tag>
+        <uni-tag :text="item" v-for="(item,index) in historys" :key="index" class="history-tag" @click="goToGoodsList(item)"></uni-tag>
       </view>
     </view>
   </view>
@@ -75,10 +75,17 @@
         this.historyList = Array.from(set)
         uni.setStorageSync('keyWord', JSON.stringify(this.historyList))
       },
+      //清除历史记录
       clearHistory(){
         this.historyList = []
         uni.removeStorage({
           key:'keyWord'
+        })
+      },
+      //点击历史标签跳转到商品列表
+      goToGoodsList(item){
+        uni.navigateTo({
+          url:'/subPackage/goods_list/goods_list?query=' + item 
         })
       }
     },
