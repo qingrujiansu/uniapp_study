@@ -1,6 +1,8 @@
 <template>
   <view>
-    <my-goods :goods="goodsList"></my-goods>
+    <view v-for="(item, i) in goodsList" :key="i" @click="goToGoodsDetail(item)">
+      <my-goods :goods="item"></my-goods>
+    </view>
   </view>
 </template>
 
@@ -35,6 +37,11 @@
         if (res.meta.status !== 200) uni.$http.showMsg()
         this.goodsList = [...this.goodsList, ...res.message.goods]
         this.total = res.message.total
+      },
+      goToGoodsDetail(item){
+        uni.navigateTo({
+          url:'/subPackage/goods_detail/goods_detail?goods_id=' + item.goods_id
+        })
       }
     },
     onReachBottom() {
@@ -49,8 +56,8 @@
       this.queryObject.pagenum = 1
       this.goodsList = []
       this.isLoading = false
-      this.getGoodsList(()=>uni.stopPullDownRefresh())
-    }
+      this.getGoodsList(() => uni.stopPullDownRefresh())
+    },
   }
 </script>
 

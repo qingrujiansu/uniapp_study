@@ -28,11 +28,16 @@
     <rich-text :nodes="goodsDetail.goods_introduce"></rich-text>
 
     <uni-goods-nav :fill="true" :options="options" :buttonGroup="buttonGroup" @click="onClick"
-      @buttonClick="buttonClick"  class="goods-nav"/>
+      @buttonClick="buttonClick" class="goods-nav" />
   </view>
 </template>
 
 <script>
+  import {
+    mapState,
+    mapMutations,
+    mapGetters
+  } from 'vuex'
   export default {
     data() {
       return {
@@ -45,7 +50,7 @@
         }, {
           icon: 'cart',
           text: '购物车',
-          info: 2
+          info: 0
         }],
         buttonGroup: [{
             text: '加入购物车',
@@ -63,7 +68,23 @@
     onLoad(option) {
       this.getGoodsDetail(option.goods_id)
     },
+    watch: {
+      total: {
+        handler(newValue) {
+            const findResult = this.options.find(x => x.text === '购物车')
+            if (findResult) {
+              findResult.info = newValue
+            }
+          },
+           immediate: true
+      },
+    },
+    computed: {
+      ...mapState('m_cart', ['cart']),
+      ...mapGetters('m_cart', ['total'])
+    },
     methods: {
+      ...mapMutations('m_cart', ['addToCart']),
       async getGoodsDetail(goods_id) {
         const {
           data: res
@@ -81,25 +102,37 @@
         })
       },
       onClick(e) {
-        
-        if(e.content.text == '购物车'){
+
+        if (e.content.text == '购物车') {
           uni.switchTab({
-            url:'/pages/cart/cart'
+            url: '/pages/cart/cart'
           })
         }
       },
       buttonClick(e) {
-        console.log(e)
-        this.options[2].info++
+        // { goods_id, goods_name, goods_price, goods_count, goods_small_logo, goods_state }
+        if (e.content.text === '加入购物车') {
+          const goods = {
+            goods_id: this.goodsDetail.goods_id,
+            goods_name: this.goodsDetail.goods_name,
+            goods_price: this.goodsDetail.goods_price,
+            goods_count: 1,
+            goods_state: true,
+            goods_small_logo: this.goodsDetail.goods_small_logo,
+          }
+          this.addToCart(goods)
+        }
+
       }
     }
   }
 </script>
 
 <style lang="scss">
-  .goods-detail-box{
+  .goods-detail-box {
     padding-bottom: 50px;
   }
+
   swiper {
     height: 750rpx;
 
@@ -141,7 +174,8 @@
       font-size: 12px;
     }
   }
-  .goods-nav{
+
+  .goods-nav {
     position: fixed;
     bottom: 0;
     left: 0;

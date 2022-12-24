@@ -15,9 +15,10 @@
         <view class="cate-lv2" v-for="(item2 ,index) in cateLevel2" :key="index">
           <view class="cate-lv2-title"> /{{item2.cat_name}}/</view>
           <view class="cate-lv3-list">
-            <view class="cate-lv3-item" v-for="(item3,index) in item2.children" :key="index" @click="goToGoodsList(item3)">
+            <view class="cate-lv3-item" v-for="(item3,index) in item2.children" :key="index"
+              @click="goToGoodsList(item3)">
               <!-- 图片 -->
-             <image :src="item3.cat_icon.replace('api-ugo-dev','api-ugo-web')"></image>
+              <image :src="item3.cat_icon.replace('api-ugo-dev','api-ugo-web')"></image>
               <text>{{item3.cat_name}}</text>
             </view>
           </view>
@@ -28,7 +29,9 @@
 </template>
 
 <script>
+  import badgeMix from '@/mixins/tabbar-badge.js'
   export default {
+    mixins:[badgeMix],
     data() {
       return {
         //可视区域的窗口高度
@@ -37,12 +40,12 @@
         active: 0,
         //二级分类列表
         cateLevel2: [],
-        scrollTop:0,
+        scrollTop: 0,
       }
     },
     onLoad() {
       const sysInfo = uni.getSystemInfoSync()
-      this.wh = sysInfo.windowHeight -50
+      this.wh = sysInfo.windowHeight - 50
       this.getCateList()
     },
     methods: {
@@ -62,9 +65,9 @@
         this.cateLevel2 = this.cateList[index].children
         this.scrollTop = this.scrollTop === 0 ? 1 : 0
       },
-      goToGoodsList(item3){
+      goToGoodsList(item3) {
         uni.navigateTo({
-          url:'/subPackage/goods_list/goods_list?cid=' + item3.cat_id 
+          url: '/subPackage/goods_list/goods_list?cid=' + item3.cat_id
         })
       }
     }
